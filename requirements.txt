@@ -1,0 +1,11 @@
+python>=3.10
+aiogram==2.23.1
+aiohttp 
+beautifulsoup4
+lxml
+pymorphy2==0.9.1
+rusenttokenize==0.0.5
+torch==1.13.0
+transformers==4.24.0
+aiofiles
+environs

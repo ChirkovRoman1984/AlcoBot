@@ -1,0 +1,8 @@
+/sql/
+alco_img.txt
+/gifs/
+ai/models/
+/__pycache__/
+/log/
+/.idea/
+.env
