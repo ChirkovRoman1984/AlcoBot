@@ -56,7 +56,6 @@ class Dialog:
             return ''
         msgs = "\n".join(self.all_mesgs)
         text = f'История чата:\n{msgs}\n-'
-        print(text)
         return text
 
 
@@ -86,9 +85,9 @@ class GPT2TextGenerator:
         out = self.model.generate(
             input_ids,
             no_repeat_ngram_size=2,
-            repetition_penalty=3.0,
-            num_beams=10,
-            do_sample=True,
+            repetition_penalty=2.0,
+            num_beams=20,
+            # do_sample=True,
             stopping_criteria=StoppingCriteriaList([self.stop_criteria]),
             **kwargs
         )

@@ -1,21 +1,25 @@
 import asyncio
 import logging
 import random
+import aiofiles
 
 import config as cfg
 
 from aiogram import types
 from aiogram.utils.exceptions import BadRequest
 
-from ai.sberbank import text_gen, Dialog, dialogs
+# from ai.sberbank import text_gen, Dialog, dialogs
+from ai.sberbank import text_gen
+from ai.tinkoff import tinkoff_gen, Dialog, dialogs
 from ai.test_class import classifier
+from create_bot import bot
 from dialogs import msg, prikol
 from handlers.draka.food import show_snack
 from handlers.draka.weapon import weapon_show
 from handlers.parser.bani import show_bani
 
 
-async def show_random_goodies(message: types.Message):
+async def show_random_goodies(message: types.Message) -> None:
     rnd = random.randint(1, 100)
     if rnd < 6:
         await weapon_show(message)
@@ -23,8 +27,8 @@ async def show_random_goodies(message: types.Message):
         await show_snack(message)
 
 
-async def reply_text_messages(message: types.Message):
-    if message.reply_to_message.from_user.id == 2070208630 and message.text:
+async def reply_text_messages(message: types.Message) -> None:
+    if message.reply_to_message.from_user.id == bot['config'].bot.id and message.text:
         dialog = dialogs.get(message.chat.id, None)
         if dialog is None:
             dialog = Dialog()
@@ -32,7 +36,8 @@ async def reply_text_messages(message: types.Message):
         text_msgs = dialog.text(message)
         otvet = ''
         if text_msgs:
-            otvet = text_gen.reply2(text_msgs)
+            # otvet = text_gen.reply2(text_msgs)
+            otvet = tinkoff_gen.reply2(text_msgs)
         # otvet = text_gen.reply(message)
         if otvet:
             log_msg = f'{message.chat.title}, {message.chat.id}, {message.from_user.first_name}, {message.text}' \
@@ -74,7 +79,7 @@ async def get_text_messages(message: types.Message):
             sticker = 'stikers\\stick (' + str(random.randrange(1, 242)) + ').webp'
             await asyncio.sleep(2)
             try:
-                with open(sticker, 'rb') as stick:
+                async with aiofiles.open(sticker, 'rb') as stick:
                     await message.answer_sticker(stick)
             except BadRequest:
                 await message.answer(
@@ -108,7 +113,7 @@ async def get_text_messages(message: types.Message):
 
     elif "наливай" in message.text.lower():
         await asyncio.sleep(2)
-        await message.reply(random.choice(msg.nalivay))
+        await message.reply(msg.nalivay)
 
     cfg.data[message.chat.id].message_counter += 1
     cfg.data[message.chat.id].last_msg_time = message.date.timestamp()

@@ -16,6 +16,7 @@ from database.db import Chat
 class AlcoBot:
     token: str
     main_group_id: int
+    id: int
     # admin_ids: list[int]
     # use_redis: bool
 
@@ -39,7 +40,8 @@ def load_config(path: str = None):
     return Config(
         bot=AlcoBot(
             token=env.str("BOT_TOKEN"),
-            main_group_id=int(env.str("GROUP_BROTHERHOOD"))
+            main_group_id=int(env.str("GROUP_BROTHERHOOD")),
+            id=int(env.str('BOT_ID'))
             # admin_ids=list(map(int, env.list("ADMINS"))),
             # use_redis=env.bool("USE_REDIS"),
         ),

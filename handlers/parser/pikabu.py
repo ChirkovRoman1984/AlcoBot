@@ -84,6 +84,8 @@ async def get_pikabu():
             for item in stories:
                 story = {}
                 story_texts = item.find_all('div', class_="story-block story-block_type_text")
+                if len(story_texts) > 200:
+                    continue
                 story_imgs = item.find_all('img', class_="story-image__image")
                 story_title = item.find('a', class_="story__title-link")
                 images = []

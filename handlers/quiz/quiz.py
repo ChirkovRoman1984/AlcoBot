@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 from aiogram import types
 from aiogram.utils.exceptions import MessageCantBeDeleted
@@ -6,11 +6,7 @@ from aiogram.utils.exceptions import MessageCantBeDeleted
 from create_bot import bot
 
 
-quiz_db = {}  # Словарь-хранилище для активных опросов
-
-
 class Quiz:
-
     def __init__(self, poll_type, question, options, correct_option_id, explanation=''):
         self.type: str = poll_type
         self.correct_option_id: int = correct_option_id
@@ -19,7 +15,7 @@ class Quiz:
         self.options: List[str] = [*options]
 
 
-async def quiz_callback(callback: types.CallbackQuery):
+async def quiz_callback(callback: types.CallbackQuery) -> None:
     try:
         await callback.message.delete()
     except MessageCantBeDeleted:
@@ -30,7 +26,7 @@ async def quiz_callback(callback: types.CallbackQuery):
         quiz = quiz_db[callback.message.chat.id]
         await bot.send_poll(
             chat_id=bot['config'].bot.main_group_id,
-            type=quiz.poll_type,
+            type=quiz.type,
             question=quiz.question,
             explanation=quiz.explanation,
             options=quiz.options,
@@ -40,7 +36,7 @@ async def quiz_callback(callback: types.CallbackQuery):
     del quiz_db[callback.message.chat.id]
 
 
-async def input_quiz(message: types.Message):
+async def input_quiz(message: types.Message) -> None:
 
     quiz = Quiz(
         poll_type=message.poll.type,
@@ -57,3 +53,6 @@ async def input_quiz(message: types.Message):
     markup.add(item1, item2)
 
     await message.answer('Всё правильно? Публикуем в чате?', reply_markup=markup)
+
+
+quiz_db: Dict[int, Quiz] = {}  # Словарь-хранилище для активных опросов

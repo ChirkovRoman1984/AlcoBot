@@ -6,10 +6,12 @@ import aiohttp
 from aiogram import types
 from aiogram.utils.exceptions import MessageCantBeDeleted
 from bs4 import BeautifulSoup
+from fastai.vision.all import PILImage
 
 import config
+from ai.girls_classifier import girl_class
 
-from create_bot import rate_limit
+from create_bot import rate_limit, bot
 from dialogs import alco_images
 # from handlers.parser.classes import titties
 from handlers.parser.photo_35 import photo_35
@@ -110,6 +112,20 @@ async def cmd_m(message: types.Message):
         await message.answer_animation(mem)
     else:
         await message.answer_photo(mem)
+        if message.chat.id == bot['config'].bot.main_group_id:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url=mem) as response:
+                    if not response.ok:
+                        pass
+                    img = PILImage.create(await response.content.read())
+            pred, pred_idx, probs = girl_class.predict(img)
+            if probs[pred_idx] > 0.7:
+                if pred == 'slim':
+                    await message.answer('Заебись такая девочка')
+                elif pred == 'black':
+                    await message.answer('Люблю черненьких!')
+                else:
+                    await message.answer('Вот это толстуха!!!')
 
 
 async def getmem3():
