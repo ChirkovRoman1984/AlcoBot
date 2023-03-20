@@ -7,7 +7,7 @@ from aiogram.utils.exceptions import MessageCantBeDeleted
 from bs4 import BeautifulSoup
 
 from handlers.parser.headers import headers
-from create_bot import rate_limit
+from create_bot import rate_limit, bot
 
 list_images = []
 popular_gifs = []
@@ -29,8 +29,11 @@ async def cmd_p(message: types.Message):
 
 
 async def show(message: types.Message):
-    image = await get_image()
-    await message.answer_animation(image)
+    if message.chat.id in bot['config'].bot.trusted_groups:
+        image = await get_image()
+        await message.answer_animation(image)
+    else:
+        await message.answer('Сорян, лавочка закрылась. Можно попросить админа в личку открыть доступ')
 
 
 async def get_image():

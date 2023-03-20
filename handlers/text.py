@@ -21,9 +21,9 @@ from handlers.parser.bani import show_bani
 
 async def show_random_goodies(message: types.Message) -> None:
     rnd = random.randint(1, 100)
-    if rnd < 6:
+    if rnd < 4:
         await weapon_show(message)
-    elif 6 <= rnd < 16:
+    elif 4 <= rnd < 10:
         await show_snack(message)
 
 

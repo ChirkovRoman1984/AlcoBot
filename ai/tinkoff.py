@@ -56,7 +56,8 @@ class GPT2TextGenerator:
         self.model = GPT2LMHeadModel.from_pretrained(model_path)
         self.tokenizer = GPT2Tokenizer.from_pretrained(model_path)
         self.model.config.pad_token_id = self.model.config.eos_token_id
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        # self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cpu")
         self.model.to(self.device)
         self.stop_ids = [self.tokenizer.encode(w)[0] for w in self.stop_words]
         self.stop_criteria = KeywordsStoppingCriteria(self.stop_ids)

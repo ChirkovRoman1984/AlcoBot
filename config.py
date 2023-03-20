@@ -17,6 +17,7 @@ class AlcoBot:
     token: str
     main_group_id: int
     id: int
+    trusted_groups: list[int]
     # admin_ids: list[int]
     # use_redis: bool
 
@@ -24,7 +25,6 @@ class AlcoBot:
 # @dataclass
 # class Miscellaneous:
 #     other_params: str = None
-
 
 @dataclass
 class Config:
@@ -36,12 +36,14 @@ class Config:
 def load_config(path: str = None):
     env = Env()
     env.read_env(path)
+    env.list()
 
     return Config(
         bot=AlcoBot(
             token=env.str("BOT_TOKEN"),
             main_group_id=int(env.str("GROUP_BROTHERHOOD")),
-            id=int(env.str('BOT_ID'))
+            id=int(env.str('BOT_ID')),
+            trusted_groups=list(map(int, env.list('TRUSTED_GROUPS')))
             # admin_ids=list(map(int, env.list("ADMINS"))),
             # use_redis=env.bool("USE_REDIS"),
         ),

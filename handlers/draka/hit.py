@@ -348,9 +348,9 @@ async def callback_inline_hit(call: types.CallbackQuery):
                 txt = f"{user1.name} {random.choice(msg.hit_low)}. "
                 otvet = text_gen.simple_generate(
                     txt+"Чтобы ",
-                    temperature=1.8,
+                    temperature=1.6,
                     max_length=48,
-                    length_penalty=0.4
+                    length_penalty=-0.5
                 )
                 otvet = f"{otvet}\n{user2.name} получил минус {user1.atack} HP"
                 if user2.hp == 0:

@@ -23,7 +23,7 @@ class PornoGifs:
 
 class Titties:
     url = 'http://joyreactor.com/tag/erotic/new'
-    proxy = 'http://165.154.243.247:80'
+    # proxy = 'http://165.154.243.247:80'
     # Генеральная очередь: список из списков ссылок на картинки с одной страницы сайта
     queue: list = []
     # Позиция в генеральной очереди для каждого чата
@@ -35,7 +35,8 @@ class Titties:
     async def get_num_pages(self):
         async with aiohttp.ClientSession() as session:
             try:
-                async with session.get(url=self.url, headers=headers, proxy=self.proxy) as response:
+                # async with session.get(url=self.url, headers=headers, proxy=self.proxy) as response:
+                async with session.get(url=self.url, headers=headers) as response:
                     if not response.ok:
                         return 1
                     soup = BeautifulSoup(await response.text(), 'lxml')
@@ -51,7 +52,8 @@ class Titties:
         url = self.url + f'/{random.randint(1, self.num_pages)}'
         async with aiohttp.ClientSession() as session:
             try:
-                async with session.get(url=url, headers=headers, proxy=self.proxy) as response:
+                # async with session.get(url=url, headers=headers, proxy=self.proxy) as response:
+                async with session.get(url=url, headers=headers) as response:
                     if response.ok:
                         soup = BeautifulSoup(await response.text(), 'lxml')
                         items = soup.find_all('div', class_='image')

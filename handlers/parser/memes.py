@@ -6,15 +6,16 @@ import aiohttp
 from aiogram import types
 from aiogram.utils.exceptions import MessageCantBeDeleted
 from bs4 import BeautifulSoup
-from fastai.vision.all import PILImage
+# from fastai.vision.all import PILImage
+# from PIL import Image
 
 import config
-from ai.girls_classifier import girl_class
+# from ai.girls_classifier import girl_class
 
 from create_bot import rate_limit, bot
 from dialogs import alco_images
-# from handlers.parser.classes import titties
-from handlers.parser.photo_35 import photo_35
+from handlers.parser.classes import titties
+# from handlers.parser.photo_35 import photo_35
 from handlers.parser.headers import headers
 
 
@@ -104,28 +105,29 @@ async def cmd_m(message: types.Message):
     except MessageCantBeDeleted:
         pass
     # mem = await get_woman()
-    # mem = await titties.get_image(message)
-    mem = await photo_35.get_image(message)
+    mem = await titties.get_image(message)
+    # mem = await photo_35.get_image(message)
     if not mem:
         await message.answer('Сервер с девочками не отвечает')
     elif mem[-3:] == 'gif':
         await message.answer_animation(mem)
     else:
         await message.answer_photo(mem)
-        if message.chat.id == bot['config'].bot.main_group_id:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url=mem) as response:
-                    if not response.ok:
-                        pass
-                    img = PILImage.create(await response.content.read())
-            pred, pred_idx, probs = girl_class.predict(img)
-            if probs[pred_idx] > 0.7:
-                if pred == 'slim':
-                    await message.answer('Заебись такая девочка')
-                elif pred == 'black':
-                    await message.answer('Люблю черненьких!')
-                else:
-                    await message.answer('Вот это толстуха!!!')
+        # if message.chat.id == bot['config'].bot.main_group_id:
+        #     async with aiohttp.ClientSession() as session:
+        #         async with session.get(url=mem) as response:
+        #             if not response.ok:
+        #                 pass
+        #             img = PILImage.create(await response.content.read())
+        #             # img = Image.create(await response.content.read())
+        #     pred, pred_idx, probs = girl_class.predict(img)
+        #     if probs[pred_idx] > 0.7:
+        #         if pred == 'slim':
+        #             await message.answer('Заебись такая девочка')
+        #         elif pred == 'black':
+        #             await message.answer('Люблю черненьких!')
+        #         else:
+        #             await message.answer('Вот это толстуха!!!')
 
 
 async def getmem3():
