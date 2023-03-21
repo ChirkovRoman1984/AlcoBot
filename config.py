@@ -36,7 +36,6 @@ class Config:
 def load_config(path: str = None):
     env = Env()
     env.read_env(path)
-    env.list()
 
     return Config(
         bot=AlcoBot(
