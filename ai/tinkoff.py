@@ -63,7 +63,7 @@ class GPT2TextGenerator:
         self.stop_criteria = KeywordsStoppingCriteria(self.stop_ids)
 
     def reply2(self, text: str):
-        print(text)
+        # print(text)
         input_ids = self.tokenizer.encode(
             text,
             add_special_tokens=False,
@@ -87,7 +87,7 @@ class GPT2TextGenerator:
         # regexp = "&quot;|&laquo;"
         otvet = re.sub(r"&\w{3,6};", "", otvet, 0, re.MULTILINE)
 
-        print(repr(otvet))
+        # print(repr(otvet))
         return otvet
 
 

@@ -4,7 +4,7 @@ import json
 
 import aiohttp
 from aiogram import types
-from aiogram.utils.exceptions import MessageCantBeDeleted
+from aiogram.utils.exceptions import MessageCantBeDeleted, BadRequest
 from bs4 import BeautifulSoup
 # from fastai.vision.all import PILImage
 # from PIL import Image
@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 import config
 # from ai.girls_classifier import girl_class
 
-from create_bot import rate_limit, bot
+from create_bot import rate_limit
 from dialogs import alco_images
 from handlers.parser.classes import titties
 # from handlers.parser.photo_35 import photo_35
@@ -110,7 +110,10 @@ async def cmd_m(message: types.Message):
     if not mem:
         await message.answer('Сервер с девочками не отвечает')
     elif mem[-3:] == 'gif':
-        await message.answer_animation(mem)
+        try:
+            await message.answer_animation(mem)
+        except BadRequest:
+            await message.answer('Нет прав на отправку гиф анимиации в чат (((')
     else:
         await message.answer_photo(mem)
         # if message.chat.id == bot['config'].bot.main_group_id:

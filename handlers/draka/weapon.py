@@ -5,7 +5,7 @@ import time
 import pymorphy2
 
 from aiogram import types
-from aiogram.utils.exceptions import MessageNotModified
+from aiogram.utils.exceptions import MessageNotModified, BadRequest
 
 import config as cfg
 
@@ -67,11 +67,14 @@ async def weapon_show(message: types.Message, max_dmg=60, max_durability=30, nam
     markup = types.InlineKeyboardMarkup()
     item = types.InlineKeyboardButton("Подобрать", callback_data=f'weapon={key}')
     markup.add(item)
-    await message.answer(weapon.pic)
-    await message.answer(
-        f'{weapon.name}\nПрочность - {weapon.durability}\nУрон - {weapon.dmg}',
-        reply_markup=markup
-    )
+    try:
+        await message.answer(weapon.pic)
+        await message.answer(
+            f'{weapon.name}\nПрочность - {weapon.durability}\nУрон - {weapon.dmg}',
+            reply_markup=markup
+        )
+    except BadRequest:
+        pass
 
 
 async def weapon_drop(message: types.Message, weapon):
@@ -81,11 +84,14 @@ async def weapon_drop(message: types.Message, weapon):
     markup = types.InlineKeyboardMarkup()
     item = types.InlineKeyboardButton("Подобрать", callback_data=f'weapon={key}')
     markup.add(item)
-    await message.answer(weapon.pic)
-    await message.answer(
-        f'{weapon.name}\nПрочность - {weapon.durability}\nУрон - {weapon.dmg}',
-        reply_markup=markup
-    )
+    try:
+        await message.answer(weapon.pic)
+        await message.answer(
+            f'{weapon.name}\nПрочность - {weapon.durability}\nУрон - {weapon.dmg}',
+            reply_markup=markup
+        )
+    except BadRequest:
+        pass
 
 
 # @dp.message_handler(commands=["pushka"])

@@ -2,7 +2,7 @@ import asyncio
 import logging
 import time
 
-from aiogram.utils.exceptions import BadRequest
+from aiogram.utils.exceptions import BadRequest, ChatNotFound
 
 import config as cfg
 from filters import register_all_filters
@@ -50,7 +50,10 @@ async def loop_msg() -> None:
 
             if time.time() - cfg.data[chat_id].last_msg_time > cfg.data[chat_id].pikabu_delta > 0:
                 cfg.data[chat_id].last_msg_time = time.time()
-                await pikabu.show(chat_id)
+                try:
+                    await pikabu.show(chat_id)
+                except ChatNotFound:
+                    print('Чат удалился', chat_id)
 
 
 async def on_startup(disp: Dispatcher) -> None:
