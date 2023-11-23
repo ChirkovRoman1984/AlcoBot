@@ -1,5 +1,5 @@
 python>=3.10
-aiogram==2.23.1
+aiogram>=2.23.1
 aiohttp 
 beautifulsoup4
 lxml
@@ -9,4 +9,3 @@ torch==2.0
 transformers==4.24.0
 aiofiles
 environs
-fastai

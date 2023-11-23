@@ -41,7 +41,7 @@ class Titties:
                         return 1
                     soup = BeautifulSoup(await response.text(), 'lxml')
                     # Число страниц
-                    n_pages = int(soup.find('a', class_='next').get('href').split('/')[-1]) + 1
+                    n_pages = int(soup.find('a', class_='w-5/12').get('href').split('/')[-1]) + 1
             except ClientConnectorError:
                 return 0
         return n_pages
@@ -49,7 +49,7 @@ class Titties:
     async def get_new_images(self):
         images = []
         # Ссылка на рандомную страницу. Счёт на ресурсе идёт с конца. Последняя по номеру стр - первая на ресурсе
-        url = self.url + f'/{random.randint(1, self.num_pages)}'
+        url = self.url + f'/{self.num_pages - round(random.gammavariate(3., 2.))}'
         async with aiohttp.ClientSession() as session:
             try:
                 # async with session.get(url=url, headers=headers, proxy=self.proxy) as response:
