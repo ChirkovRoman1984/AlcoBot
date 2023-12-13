@@ -19,11 +19,23 @@ from handlers.draka.weapon import weapon_show
 from handlers.parser.bani import show_bani
 
 
+def is_probable(percent=50) -> bool:
+    """
+    Выдает True в зависимости от заданной вероятности
+    @param percent: Вероятность положительного исхода в процентах
+    @return: bool
+    """
+    return random.choices([True, False], weights=[percent, 100 - percent])
+
+
 async def show_random_goodies(message: types.Message) -> None:
-    rnd = random.randint(1, 100)
-    if rnd < 4:
+    # random.choices([True, False], weights=[3, 97])
+    # rnd = random.randint(1, 100)
+    # if rnd < 3:
+    if is_probable(3):
         await weapon_show(message)
-    elif 4 <= rnd < 10:
+    # elif 3 <= rnd < 8:
+    elif is_probable(4):
         await show_snack(message)
 
 
@@ -75,7 +87,8 @@ async def get_text_messages(message: types.Message):
     elif cfg.data[message.chat.id].message_counter > 15:
         cfg.data[message.chat.id].message_counter = random.randrange(10)
 
-        if random.randrange(0, 6) == 1:
+        # if random.randrange(0, 6) == 1:
+        if is_probable(30):
             sticker = 'stikers\\stick (' + str(random.randrange(1, 242)) + ').webp'
             await asyncio.sleep(2)
             try:
@@ -86,7 +99,8 @@ async def get_text_messages(message: types.Message):
                     'Хотел вам стикер отправить, но у вас тут нельзя это делать =(\n'
                     'Как-то у вас тут уныло... Чувствую себя обделенным')
 
-        elif random.randrange(0, 6) == 2:
+        # elif random.randrange(0, 6) == 2:
+        elif is_probable(10):
             markup = types.InlineKeyboardMarkup(row_width=2)
             item1 = types.InlineKeyboardButton("Давай!", callback_data='hit - да')
             item2 = types.InlineKeyboardButton("Пусть живёт", callback_data='hit - нет')
