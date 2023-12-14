@@ -25,7 +25,7 @@ def is_probable(percent=50) -> bool:
     @param percent: Вероятность положительного исхода в процентах
     @return: bool
     """
-    return random.choices([True, False], weights=[percent, 100 - percent])
+    return random.choices([True, False], weights=[percent, 100 - percent])[0]
 
 
 async def show_random_goodies(message: types.Message) -> None:
