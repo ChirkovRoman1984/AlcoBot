@@ -4,15 +4,18 @@ import json
 
 import aiohttp
 from aiogram import types
-from aiogram.utils.exceptions import MessageCantBeDeleted
+from aiogram.utils.exceptions import MessageCantBeDeleted, BadRequest
 from bs4 import BeautifulSoup
+# from fastai.vision.all import PILImage
+# from PIL import Image
 
 import config
+# from ai.girls_classifier import girl_class
 
 from create_bot import rate_limit
 from dialogs import alco_images
-# from handlers.parser.classes import titties
-from handlers.parser.photo_35 import photo_35
+from handlers.parser.classes import titties
+# from handlers.parser.photo_35 import photo_35
 from handlers.parser.headers import headers
 
 
@@ -102,14 +105,32 @@ async def cmd_m(message: types.Message):
     except MessageCantBeDeleted:
         pass
     # mem = await get_woman()
-    # mem = await titties.get_image(message)
-    mem = await photo_35.get_image(message)
+    mem = await titties.get_image(message)
+    # mem = await photo_35.get_image(message)
     if not mem:
         await message.answer('Сервер с девочками не отвечает')
     elif mem[-3:] == 'gif':
-        await message.answer_animation(mem)
+        try:
+            await message.answer_animation(mem)
+        except BadRequest:
+            await message.answer('Нет прав на отправку гиф анимиации в чат (((')
     else:
         await message.answer_photo(mem)
+        # if message.chat.id == bot['config'].bot.main_group_id:
+        #     async with aiohttp.ClientSession() as session:
+        #         async with session.get(url=mem) as response:
+        #             if not response.ok:
+        #                 pass
+        #             img = PILImage.create(await response.content.read())
+        #             # img = Image.create(await response.content.read())
+        #     pred, pred_idx, probs = girl_class.predict(img)
+        #     if probs[pred_idx] > 0.7:
+        #         if pred == 'slim':
+        #             await message.answer('Заебись такая девочка')
+        #         elif pred == 'black':
+        #             await message.answer('Люблю черненьких!')
+        #         else:
+        #             await message.answer('Вот это толстуха!!!')
 
 
 async def getmem3():
@@ -120,7 +141,8 @@ async def getmem3():
     if not config.images_mem:
         images = []
         urls = []
-        url = 'https://www.anekdotovmir.ru/category/mjemy/'
+        # url = 'https://www.anekdotovmir.ru/category/mjemy/'
+        url = 'https://www.anekdotovmir.ru/category/kartinki/'
         async with aiohttp.ClientSession() as session:
             async with session.get(url=url, headers=headers) as response:
                 soup = BeautifulSoup(await response.text(), 'lxml')
@@ -134,8 +156,9 @@ async def getmem3():
                     soup = BeautifulSoup(await response.text(), 'lxml')
                 items = soup.find('div', class_="entry-content clr").find_all('img', loading='lazy')
                 for i in items:
-                    if i.get('src'):
-                        images.append(i.get('src'))
+                    data_src = i.get('data-src')
+                    if data_src:
+                        images.append(data_src[data_src.rfind('http'):])
 
         config.images_mem = images.copy()
     image = random.choice(config.images_mem)

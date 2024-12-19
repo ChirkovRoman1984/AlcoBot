@@ -15,7 +15,7 @@ class ThrottlingMiddleware(BaseMiddleware):
         self.prefix = key_prefix
         super(ThrottlingMiddleware, self).__init__()
 
-    async def on_process_message(self, message: types.Message, data: dict):
+    async def on_process_message(self, message: types.Message, _):
         handler = current_handler.get()
         dispatcher = Dispatcher.get_current()
 
@@ -41,21 +41,14 @@ class ThrottlingMiddleware(BaseMiddleware):
             # await self.message_throttled(message, t)
             if t.exceeded_count <= 2:
                 print(key)
-                # try:
-                #     await message.delete()
-                # except MessageCantBeDeleted:
-                #     pass
-
-                if key.startswith('steal'):
-                    await message.answer(f'Воровать можно раз в минуту. Осталось {round(t.rate - t.delta)} секунд')
-                elif key in ['m', 'coub', 'p']:
+                if key in ['m', 'coub', 'p']:
                     await message.answer(f'Новые сисечки для тебя только через {round(t.rate - t.delta)} секунд')
                 elif key == 'hit':
                     await message.answer(f'Отдохни после драки немного. Осталось {round(t.rate - t.delta)} секунд')
                 elif key == 'dice':
                     await message.answer(f'Казино откроется через {round(t.rate - t.delta)} секунд')
-                else:
-                    await message.answer(f'Не флуди! Отдохни {round(t.rate - t.delta)} секунд')
+                # else:
+                #     await message.answer(f'Не флуди! Отдохни {round(t.rate - t.delta)} секунд')
             raise CancelHandler()
 
     # async def message_throttled(self, message: types.Message, throttled: Throttled):

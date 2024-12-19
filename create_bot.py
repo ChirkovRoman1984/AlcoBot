@@ -11,7 +11,6 @@ dp = Dispatcher(bot, storage=storage)
 
 bot['config']: Config = config
 
-
 def rate_limit(limit=1, key=None):
     def decorator(func):
         setattr(func, 'throttling_rate_limit', limit)

@@ -104,6 +104,9 @@ async def get_pikabu():
                 if images:
                     story['imgs'] = images
                 if any(i in story for i in ('text', 'imgs')):
+                    if 'text' in story:
+                        if len(story['text']) > 800:
+                            continue
                     list_stories.append(story)
     return list_stories
 

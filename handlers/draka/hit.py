@@ -45,7 +45,7 @@ async def fight(message: types.Message):
     smotrit = await message.answer(f"{imya} разбушевался! Смотрит кому вьебать...")
     options = random.sample(msg.hit, 3)
     msg_poll = await bot.send_poll(
-        chat_id=message.chat.id, question=f'"{random.choice(msg.title)}"\nВыбирай как въебать 20 сек.',
+        chat_id=message.chat.id, question=f'"{msg.title}"\nВыбирай как въебать 20 сек.',
         options=options, is_anonymous=False, open_period=20
     )
 
@@ -86,7 +86,7 @@ async def fight(message: types.Message):
             random_user = data[message.chat.id].users.get(random_user.id, User(random_user, message.chat.id))
 
             otv = f'А потом пригляделся - {random_user.name} отдыхает. ' \
-                  f'Взял, да {random.choice(msg.pre_hit)} {options[user.option]} ему. ' \
+                  f'Взял, да {msg.pre_hit} {options[user.option]} ему. ' \
                   f'<tg-spoiler>{user.atack}HP</tg-spoiler>'
             random_user.hp -= user.atack
             user.weapon.durability -= 1
@@ -122,8 +122,8 @@ async def fight(message: types.Message):
 
     for pair in pairs:
         user1, user2 = pair
-        hit1 = f'{user1.name} {random.choice(msg.pre_hit)} {options[user1.option]}'
-        hit2 = f'{user2.name} {random.choice(msg.pre_hit)} {options[user2.option]}'
+        hit1 = f'{user1.name} {msg.pre_hit} {options[user1.option]}'
+        hit2 = f'{user2.name} {msg.pre_hit} {options[user2.option]}'
         if user1.id == user2.id:
             otv = f'{hit1} сам себе <tg-spoiler>{user1.atack}HP</tg-spoiler>'
             user1.hp -= user1.atack
@@ -136,7 +136,7 @@ async def fight(message: types.Message):
                 await weapon_drop(message, weapon)
                 otv = otv + f'{user2.name} потерял оружие.'
             else:
-                otv = otv + f'{user2.name} {random.choice(msg.damage)}'
+                otv = otv + f'{user2.name} {msg.damage}'
             user2.hp -= user1.atack
             user1.weapon.durability -= 1
             if user2.hp == 0:
@@ -150,7 +150,7 @@ async def fight(message: types.Message):
                     await weapon_drop(message, weapon)
                     otv = otv + f'{user2.name} потерял оружие.'
                 else:
-                    otv = otv + f'{user2.name} {random.choice(msg.damage)}'
+                    otv = otv + f'{user2.name} {msg.damage}'
                 user2.hp -= user1.atack
                 user1.weapon.durability -= 1
                 if user2.hp == 0:
@@ -163,7 +163,7 @@ async def fight(message: types.Message):
                     await weapon_drop(message, weapon)
                     otv = otv + f'{user1.name} потерял оружие.'
                 else:
-                    otv = otv + f'{user1.name} {random.choice(msg.damage)}'
+                    otv = otv + f'{user1.name} {msg.damage}'
                 user1.hp -= user2.atack
                 user2.weapon.durability -= 1
                 if user1.hp == 0:
@@ -176,7 +176,7 @@ async def fight(message: types.Message):
                 await weapon_drop(message, weapon)
                 otv = otv + f'{user1.name} потерял оружие.'
             else:
-                otv = otv + f'{user1.name} {random.choice(msg.damage)}'
+                otv = otv + f'{user1.name} {msg.damage}'
             user1.hp -= user2.atack
             user2.weapon.durability -= 1
             if user1.hp == 0:
@@ -348,9 +348,9 @@ async def callback_inline_hit(call: types.CallbackQuery):
                 txt = f"{user1.name} {random.choice(msg.hit_low)}. "
                 otvet = text_gen.simple_generate(
                     txt+"Чтобы ",
-                    temperature=2.0,
-                    max_length=32,
-                    length_penalty=0.4
+                    temperature=1.6,
+                    max_length=48,
+                    length_penalty=-0.5
                 )
                 otvet = f"{otvet}\n{user2.name} получил минус {user1.atack} HP"
                 if user2.hp == 0:

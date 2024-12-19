@@ -16,9 +16,9 @@ async def banned_user_com(message: types.Message):
         if 'command' != cfg.data[message.chat.id].ban_rule:
             await banned_user_message(message)
             return
-    await message.answer('А я думал ты сдох...\nПосмотри пока котиков, отдохни')
-    mem = await memes.get_cat()
-    await bot.send_animation(chat_id=message.chat.id, animation=mem)
+    await message.answer('А я думал ты сдох...\nОтдохни пока')
+    # mem = await memes.get_cat()
+    # await bot.send_animation(chat_id=message.chat.id, animation=mem)
 
 
 async def banned_user_message(message: types.Message):

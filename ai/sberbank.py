@@ -56,7 +56,6 @@ class Dialog:
             return ''
         msgs = "\n".join(self.all_mesgs)
         text = f'История чата:\n{msgs}\n-'
-        print(text)
         return text
 
 
@@ -64,13 +63,16 @@ class GPT2TextGenerator:
     # Все буквы, цифры, основные знаки припинания, скобки и ковычки
     regex = r"[^а-яА-ЯёЁ\s\w\"?!.,:;)(=+-]|\s+(?=[.,!?:;])"
     # Возможные окончания генерации
-    stop_words = ['.', ' ?', '!', '\n', ' \n', '..', '...', '?', '.?', '!?', '?!']
+    stop_words = [
+        '.', ' ?', '!', '\n', ' \n', '..', '...', '?', '.?', '!?', '?!', '))', ')', ':)', '--)', '-)'
+    ]
 
     def __init__(self, model_path):
         self.model = GPT2LMHeadModel.from_pretrained(model_path)
         self.tokenizer = GPT2Tokenizer.from_pretrained(model_path)
         self.model.config.pad_token_id = self.model.config.eos_token_id
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        # self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cpu")
         self.model.to(self.device)
         self.stop_ids = [self.tokenizer.encode(w)[0] for w in self.stop_words]
         self.stop_criteria = KeywordsStoppingCriteria(self.stop_ids)
@@ -86,9 +88,9 @@ class GPT2TextGenerator:
         out = self.model.generate(
             input_ids,
             no_repeat_ngram_size=2,
-            repetition_penalty=3.0,
-            num_beams=10,
-            do_sample=True,
+            # repetition_penalty=2.0,
+            # num_beams=20,
+            # do_sample=True,
             stopping_criteria=StoppingCriteriaList([self.stop_criteria]),
             **kwargs
         )
@@ -208,8 +210,8 @@ class GPT2TextGenerator:
         answer = self.text_postprocess(answer)
         return answer
 
-    def text_postprocess(self, text):
-
+    @staticmethod
+    def text_postprocess(text):
         # Удаление всяких '&\quot'
         text = re.sub(r"&\w{3,6};", "", text, 0, re.MULTILINE)
         sent_list = text.split('\n')

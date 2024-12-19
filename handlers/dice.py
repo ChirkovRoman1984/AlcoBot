@@ -27,6 +27,8 @@ async def cmd_dice(message: types.Message):
         if i < user.hp:
             button = types.InlineKeyboardButton(text=str(i), callback_data=f'dice@{i}')
             buttons.append(button)
+    if user.hp > 1:
+        buttons.append(types.InlineKeyboardButton(text='Все слить, кроме 1 HP', callback_data=f'dice@{user.hp - 1}'))
     markup.add(*buttons)
     markup.add(types.InlineKeyboardButton(text="Отмена", callback_data=f"dice@0"))
     await message.answer(f'У тебя есть {user.hp} HP. Твоя ставка?', reply_markup=markup)

@@ -3,7 +3,7 @@ import random
 import time
 
 from aiogram import types
-from aiogram.utils.exceptions import MessageNotModified
+from aiogram.utils.exceptions import MessageNotModified, BadRequest
 
 import config as cfg
 from database.db import User
@@ -23,8 +23,11 @@ async def show_snack(message: types.Message, start=-40, stop=100):
     markup = types.InlineKeyboardMarkup()
     item = types.InlineKeyboardButton("Давай!", callback_data=f'hp:{hp}')
     markup.add(item)
-    await message.answer(f'{random.choice(food_emoji)}')
-    await message.answer(f'Кому вкусняшку?', reply_markup=markup)
+    try:
+        await message.answer(f'{random.choice(food_emoji)}')
+        await message.answer(f'Кому вкусняшку?', reply_markup=markup)
+    except BadRequest:
+        pass
 
 
 async def callback_inline_snack(call: types.CallbackQuery):

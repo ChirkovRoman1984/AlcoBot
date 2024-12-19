@@ -9,7 +9,8 @@ from handlers.parser.headers import headers
 
 
 class Photo35:
-    url = 'https://35photo.pro/genre_97/'
+    # url = 'https://35photo.pro/genre_97/'
+    url = 'https://35photo.pro/genre_97/new/'
     last_id = ''
     # Генеральная очередь: список из списков ссылок на картинки с одной страницы сайта
     queue: list = []
@@ -20,7 +21,8 @@ class Photo35:
 
     @property
     def php_request(self):
-        return f'/show_block.php?type=getNextPageData&page=genre&lastId={self.last_id}&community_id=97&photo_rating=35'
+        return f'/show_block.php?type=getNextPageData&page=genre&lastId={self.last_id}&community_id=97&photo_rating=0'
+        # return f'/show_block.php?type=getNextPageData&page=genre&lastId={self.last_id}&community_id=97&photo_rating=35'
 
     async def first_page(self):
         img_urls = []
@@ -31,7 +33,7 @@ class Photo35:
                         soup = BeautifulSoup(await response.text(), 'lxml')
                         items = soup.find_all('img', class_="showPrevPhoto")
                         for item in items:
-                            img_urls.append(item.get('src'))
+                            img_urls.append(item.get('data-src'))
                         self.last_id = img_urls[-1].split('/')[-1].split('_')[0]
             except ClientConnectorError:
                 pass

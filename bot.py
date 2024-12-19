@@ -2,7 +2,7 @@ import asyncio
 import logging
 import time
 
-from aiogram.utils.exceptions import BadRequest
+from aiogram.utils.exceptions import BadRequest, ChatNotFound
 
 import config as cfg
 from filters import register_all_filters
@@ -33,15 +33,14 @@ logging.basicConfig(
 # root_logger.addHandler(log_file)
 
 
-async def loop_msg():
+async def loop_msg() -> None:
 
     while True:
         await asyncio.sleep(60)
 
-        for chat in cfg.data:
-            # if chat == cfg.GROUP_ID:
-            if chat == bot['config'].bot.main_group_id:
-                if time.time() - cfg.data[chat].last_msg_time > 3600:
+        for chat_id in cfg.data:
+            if chat_id == bot['config'].bot.main_group_id:
+                if time.time() - cfg.data[chat_id].last_msg_time > 3600:
                     cfg.data[bot['config'].bot.main_group_id].last_msg_time = time.time()
                     mem = await getmem3()
                     try:
@@ -49,22 +48,29 @@ async def loop_msg():
                     except BadRequest:
                         logging.info(msg=f'Ошибка при отправке мема по таймауту\n{mem}')
 
-            if time.time() - cfg.data[chat].last_msg_time > cfg.data[chat].pikabu_delta > 0:
-                cfg.data[chat].last_msg_time = time.time()
-                await pikabu.show(chat)
+            if time.time() - cfg.data[chat_id].last_msg_time > cfg.data[chat_id].pikabu_delta > 0:
+                cfg.data[chat_id].last_msg_time = time.time()
+                try:
+                    await pikabu.show(chat_id)
+                except ChatNotFound:
+                    print('Чат удалился', chat_id)
 
 
-async def on_startup(disp: Dispatcher):
-    register_all_middleware(disp)
-    register_all_filters(disp)
-    register_all_handlers(disp)
-
-    chats_config = db.get_config()
-    for chat_config in chats_config:
-        chat_id = chat_config[0]
-        cfg.data[chat_id] = Chat(chat_id)
-
-    asyncio.create_task(loop_msg())
+# async def on_startup(disp: Dispatcher) -> None:
+#     """
+# Регистрация всех хендлеров, запуск задачи для рассылки
+#     @param disp: aiogramm Dispatcher
+#     """
+#     # register_all_middleware(disp)
+#     # register_all_filters(disp)
+#     # register_all_handlers(disp)
+#
+#     # chats_config = db.get_config()
+#     # for chat_config in chats_config:
+#     #     chat_id = chat_config[0]
+#     #     cfg.data[chat_id] = Chat(chat_id)
+#     #
+#     # asyncio.create_task(loop_msg())
 
 
 async def on_shutdown(_):
@@ -78,4 +84,16 @@ async def on_shutdown(_):
 
 
 if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True, on_startup=on_startup, on_shutdown=on_shutdown)
+
+    register_all_middleware(dp)
+    register_all_filters(dp)
+    register_all_handlers(dp)
+
+    # bot.delete_webhook(drop_pending_updates=True)
+
+    executor.start_polling(
+        dp,
+        skip_updates=True,
+        # on_startup=on_startup,
+        on_shutdown=on_shutdown
+    )
